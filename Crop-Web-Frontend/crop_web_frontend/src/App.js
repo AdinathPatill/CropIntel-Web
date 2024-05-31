@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import LoginPage from './components/LoginPage';
+import RegisterUser from './components/RegisterUser';
+import OtpPage from './components/OtpPage';
+// import Dashboard from './components/Dashboard';
+// import MainLandingPage from './components/MainLandingPage';
+// import AddFarmsForm from './components/AddFarmsForm';
+// import FarmDetails from './components/FarmDetails';
+// import ViewFarmDetails from './components/ViewFarmDetails';
+// import StartMonitoring from './components/StartMonitoring';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterUser />} />
+        <Route path="/otp" element={<OtpPage />} />
+        {/* <Route path="/dashboard" element={<MainLandingPage />} />
+        <Route path="/add-farm" element={<AddFarmsForm />} />
+        <Route path="/farm-details" element={<FarmDetails />} />
+        <Route path="/view-farm-details" element={<ViewFarmDetails />} />
+        <Route path="/start-monitoring" element={<StartMonitoring />} />
+        <Route path="/" element={<MainLandingPage />} /> */}
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
