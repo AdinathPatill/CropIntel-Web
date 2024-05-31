@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors"); // Import cors package
 require("dotenv").config();
 require("./db");
 
@@ -8,6 +9,10 @@ const farmRoutes = require("./routes/farmRoutes");
 const enumRoutes = require("./routes/enumRoutes");
 
 const app = express();
+
+// Enable CORS for all routes
+app.use(cors());
+
 app.use(bodyParser.json());
 
 app.use("/api/user", userRoutes);

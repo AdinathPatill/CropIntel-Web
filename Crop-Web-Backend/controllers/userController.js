@@ -120,15 +120,15 @@ const verifyOtp = async (req, res) => {
     let user = await User.findOne({ mobileNumber });
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    console.log("Entered OTP:", enteredOtp); // Add this logging statement
+
     if (user.otp === enteredOtp) {
+      console.log("Stored OTP:", user.otp); // Add this logging statement
       user.otp = null;
       await user.save();
-
       res.json({ success: true, message: "OTP verified successfully" });
     } else {
       res.status(400).json({ success: false, message: "Incorrect OTP" });
@@ -138,6 +138,7 @@ const verifyOtp = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
+
 
 function generateOTP() {
   return randomstring.generate({
