@@ -17,6 +17,8 @@ const RegisterUser = () => {
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [selectedTaluka, setSelectedTaluka] = useState('');
   const [selectedVillage, setSelectedVillage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchStates();
@@ -65,6 +67,8 @@ const RegisterUser = () => {
   };
 
   const handleRegister = async () => {
+    setLoading(true);
+    setError('');
     try {
       const response = await axios.post(
         `${config.backendUrl}/api/user/registerUser`,
@@ -85,11 +89,13 @@ const RegisterUser = () => {
         alert('User registered successfully');
         clearForm();
       } else {
-        alert(`Registration failed: ${response.data.message}`);
+        setError(`Registration failed: ${response.data.message}`);
       }
     } catch (error) {
       console.error('Error registering user:', error);
-      alert('Something went wrong. Please try again.');
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -107,94 +113,106 @@ const RegisterUser = () => {
 
   return (
     <Container>
+      <RightSection>
+        <Curve />
+        <AppName>CROPINTEL</AppName>
+      </RightSection>
       <LeftSection>
         <Card>
           <Title>Register</Title>
           <SubText>Create a new account on CROPINTEL</SubText>
-          <Input 
-            placeholder="Full Name" 
-            value={fullname} 
-            onChange={(e) => setFullname(e.target.value)} 
-          />
-          <Input 
-            placeholder="Mobile Number" 
-            value={mobileNumber} 
-            onChange={(e) => setMobileNumber(e.target.value)} 
-          />
+          {error && <ErrorText>{error}</ErrorText>}
+          <InputRow>
+            <Input 
+              placeholder="Full Name" 
+              value={fullname} 
+              onChange={(e) => setFullname(e.target.value)} 
+            />
+            <Input 
+              placeholder="Mobile Number" 
+              value={mobileNumber} 
+              onChange={(e) => setMobileNumber(e.target.value)} 
+            />
+          </InputRow>
           <Input 
             type="password" 
             placeholder="Password" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
+            fullWidth
           />
-          <Input 
-            placeholder="Address Line 1" 
-            value={addressLine1} 
-            onChange={(e) => setAddressLine1(e.target.value)} 
-          />
-          <Input 
-            placeholder="Address Line 2" 
-            value={addressLine2} 
-            onChange={(e) => setAddressLine2(e.target.value)} 
-          />
-          <Dropdown
-            value={selectedState}
-            onChange={(e) => {
-              setSelectedState(e.target.value);
-              setSelectedDistrict('');
-              setSelectedTaluka('');
-              setSelectedVillage('');
-              fetchDistricts(e.target.value);
-            }}
-          >
-            <option value="">Select State</option>
-            {states.map((state) => (
-              <option key={state.statecode} value={state.statecode}>{state.statenameenglish}</option>
-            ))}
-          </Dropdown>
-          <Dropdown
-            value={selectedDistrict}
-            onChange={(e) => {
-              setSelectedDistrict(e.target.value);
-              setSelectedTaluka('');
-              setSelectedVillage('');
-              fetchTalukas(e.target.value);
-            }}
-          >
-            <option value="">Select District</option>
-            {districts.map((district) => (
-              <option key={district.districtcode} value={district.districtcode}>{district.districtnameenglish}</option>
-            ))}
-          </Dropdown>
-          <Dropdown
-            value={selectedTaluka}
-            onChange={(e) => {
-              setSelectedTaluka(e.target.value);
-              setSelectedVillage('');
-              fetchVillages(e.target.value);
-            }}
-          >
-            <option value="">Select Taluka</option>
-            {talukas.map((taluka) => (
-              <option key={taluka.subdistrictcode} value={taluka.subdistrictcode}>{taluka.subdistrictnameenglish}</option>
-            ))}
-          </Dropdown>
-          <Dropdown
-            value={selectedVillage}
-            onChange={(e) => setSelectedVillage(e.target.value)}
-          >
-            <option value="">Select Village</option>
-            {villages.map((village) => (
-              <option key={village.villagecode} value={village.villagecode}>{village.villagenameenglish}</option>
-            ))}
-          </Dropdown>
-          <Button onClick={handleRegister}>Register</Button>
+          <InputRow>
+            <Input 
+              placeholder="Address Line 1" 
+              value={addressLine1} 
+              onChange={(e) => setAddressLine1(e.target.value)} 
+            />
+            <Input 
+              placeholder="Address Line 2" 
+              value={addressLine2} 
+              onChange={(e) => setAddressLine2(e.target.value)} 
+            />
+          </InputRow>
+          <DropdownRow>
+            <Dropdown
+              value={selectedState}
+              onChange={(e) => {
+                setSelectedState(e.target.value);
+                setSelectedDistrict('');
+                setSelectedTaluka('');
+                setSelectedVillage('');
+                fetchDistricts(e.target.value);
+              }}
+            >
+              <option value="">Select State</option>
+              {states.map((state) => (
+                <option key={state.statecode} value={state.statecode}>{state.statenameenglish}</option>
+              ))}
+            </Dropdown>
+            <Dropdown
+              value={selectedDistrict}
+              onChange={(e) => {
+                setSelectedDistrict(e.target.value);
+                setSelectedTaluka('');
+                setSelectedVillage('');
+                fetchTalukas(e.target.value);
+              }}
+            >
+              <option value="">Select District</option>
+              {districts.map((district) => (
+                <option key={district.districtcode} value={district.districtcode}>{district.districtnameenglish}</option>
+              ))}
+            </Dropdown>
+          </DropdownRow>
+          <DropdownRow>
+            <Dropdown
+              value={selectedTaluka}
+              onChange={(e) => {
+                setSelectedTaluka(e.target.value);
+                setSelectedVillage('');
+                fetchVillages(e.target.value);
+              }}
+            >
+              <option value="">Select Taluka</option>
+              {talukas.map((taluka) => (
+                <option key={taluka.subdistrictcode} value={taluka.subdistrictcode}>{taluka.subdistrictnameenglish}</option>
+              ))}
+            </Dropdown>
+            <Dropdown
+              value={selectedVillage}
+              onChange={(e) => setSelectedVillage(e.target.value)}
+            >
+              <option value="">Select Village</option>
+              {villages.map((village) => (
+                <option key={village.villagecode} value={village.villagecode}>{village.villagenameenglish}</option>
+              ))}
+            </Dropdown>
+          </DropdownRow>
+          <Button onClick={handleRegister} disabled={loading}>
+            {loading ? 'Registering...' : 'Register'}
+          </Button>
         </Card>
       </LeftSection>
-      <RightSection>
-        <Curve />
-        <AppName>CROPINTEL</AppName>
-      </RightSection>
     </Container>
   );
 };
@@ -271,7 +289,7 @@ const Card = styled.div`
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   text-align: center;
   width: 100%;
-  max-width: 400px;
+  max-width: 600px;
   animation: ${fadeIn} 1s ease;
   position: relative;
   z-index: 1;
@@ -288,20 +306,39 @@ const SubText = styled.p`
   margin-bottom: 20px;
 `;
 
-const Input = styled.input`
-  width: 100%;
-  padding: 12px;
+const InputRow = styled.div`
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 20px;
+`;
+
+const DropdownRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+`;
+
+const SingleInputRow = styled.div`
+  margin-bottom: 20px;
+`;
+
+const Input = styled.input`
+  width: 48%;
+  padding: 12px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
   box-sizing: border-box;
+
+  ${(props) => props.fullWidth && `
+    width: 100%;
+    margin-bottom: 20px;
+  `}
 `;
 
 const Dropdown = styled.select`
-  width: 100%;
+  width: 48%;
   padding: 12px;
-  margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
@@ -311,7 +348,7 @@ const Dropdown = styled.select`
 const Button = styled.button`
   width: 100%;
   padding: 12px;
-  background-color: #007bff;
+  background-color: #008000;
   color: white;
   border: none;
   border-radius: 5px;
@@ -322,14 +359,22 @@ const Button = styled.button`
   &:hover {
     background-color: #0056b3;
   }
+
+  &:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+  }
 `;
 
 const AppName = styled.h1`
   font-size: 48px;
   color: #fff;
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
   opacity: 0;
   animation: ${fadeIn} 1s ease forwards;
+`;
+
+const ErrorText = styled.p`
+  font-size: 14px;
+  color: red;
+  margin-bottom: 20px;
 `;

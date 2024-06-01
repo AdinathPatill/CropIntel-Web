@@ -193,17 +193,13 @@ const OtpInput = styled.input`
 const Button = styled.button`
   width: 100%;
   padding: 14px;
-  background-color: #28a745;
+  background-color: #008000;
   color: white;
   border: none;
   border-radius: 5px;
   font-size: 18px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #218838;
-  }
 `;
 
 const AppName = styled.h1`
